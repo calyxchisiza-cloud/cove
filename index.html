@@ -1,61 +1,372 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- theme #e3f3ef #0f766e #d7f3ec #cfe8df #0f766e -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cove</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root { --wash:#e3f3ef; --shell:#f4faf8; --ink:#16302c; --muted:#6f8580; --line:#e3eeea; --accent:#0f766e; --soft:#d7f3ee; --down:#d4534b; }
-    * { box-sizing:border-box; } body { margin:0; min-height:100vh; font-family:Inter,"Segoe UI",sans-serif; color:var(--ink); background:radial-gradient(900px 480px at 10% -10%, #fff, var(--wash)); }
-    .shell { width:min(1120px, calc(100% - 40px)); margin:28px auto; min-height:760px; display:grid; grid-template-columns:84px 1fr; background:var(--shell); border-radius:28px; box-shadow:0 24px 60px rgba(15,60,50,.08); }
-    .rail { display:flex; flex-direction:column; align-items:center; padding:22px 0; }
-    .mark { width:44px; height:44px; border-radius:14px; background:var(--soft); color:var(--accent); display:grid; place-items:center; }
-    .content { padding:28px 28px 28px 6px; }
-    h1 { margin:0; font-size:28px; letter-spacing:-.03em; } .sub { margin:4px 0 0; color:var(--muted); font-size:14px; }
-    .stats, .grid { display:grid; gap:14px; margin-top:16px; } .stats { grid-template-columns:repeat(3,1fr); } .grid { grid-template-columns:1fr 1fr; }
-    .stat, .panel { background:#fff; border-radius:18px; padding:16px 18px; }
-    .stat .k { color:var(--muted); font-size:13px; } .stat b { display:block; margin-top:10px; font-size:30px; }
-    h2 { margin:0 0 8px; font-size:16px; } label { display:block; margin:10px 0 4px; font-size:12px; color:var(--muted); }
-    input, button { font:inherit; } input { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
-    .row { display:flex; gap:10px; } .row > * { flex:1; }
-    button.primary { background:var(--accent); color:#fff; border:0; border-radius:12px; padding:10px 14px; cursor:pointer; }
-    pre { white-space:pre-wrap; background:#f3faf8; border-radius:12px; padding:12px; min-height:80px; } .error { color:var(--down); }
-    @media (max-width:900px) { .shell { grid-template-columns:1fr; } .stats, .grid { grid-template-columns:1fr; } }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>:root {
+  --wash: #e3f3ef;
+  --ink: #1b1d1f;
+  --muted: #8b928a;
+  --line: #eef1ee;
+  --card: #ffffff;
+  --accent: #0f766e;
+  --soft: #d7f3ec;
+  --bar: #cfe8df;
+  --hot: #0f766e;
+  --up: #1f9d55;
+  --down: #e11d48;
+  --peach: #f0c7a4;
+  --lilac: #c9c3e6;
+  --sky: #b7d4ef;
+  --shadow: 0 12px 32px rgba(28, 40, 24, 0.05);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", Inter, sans-serif;
+  color: var(--ink);
+  background: var(--wash);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+::selection { background: var(--soft); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #d5ddd4; border-radius: 99px; }
+
+.frame {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 6px;
+  padding: 18px 22px 22px 16px;
+}
+.rail {
+  background: var(--card);
+  border-radius: 30px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 14px;
+  position: sticky;
+  top: 18px;
+  height: calc(100vh - 36px);
+}
+.rail button, .mark {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: #8d948c;
+  display: grid;
+  place-items: center;
+}
+.rail nav { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; }
+.rail button.on, .rail button:hover { background: #1c1f1c; color: #fff; }
+.grow { flex: 1; }
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.stage { padding: 8px 8px 8px 12px; min-width: 0; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.greet { display: flex; align-items: center; gap: 12px; }
+.badge-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+}
+h1 { margin: 0; font-size: 30px; letter-spacing: -0.04em; font-weight: 700; }
+.sub { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; }
+.tools { display: flex; align-items: center; gap: 10px; }
+.finder {
+  height: 48px;
+  min-width: 260px;
+  background: #fff;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  padding: 4px 4px 4px 16px;
+  box-shadow: var(--shadow);
+}
+.finder input::placeholder { color: #b0b6ae; }
+.go, .round {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  display: grid;
+  place-items: center;
+}
+.go { background: #1c1f1c; color: #fff; }
+.round { background: #fff; color: #6d746c; box-shadow: var(--shadow); position: relative; }
+.dot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 1.5px solid #fff;
+}
+.stats, .split { display: grid; gap: 16px; margin-top: 18px; }
+.stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.split { grid-template-columns: 1.35fr 0.9fr; }
+.card {
+  background: var(--card);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px 14px;
+  min-width: 0;
+}
+.stat-top, .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.stat-label { display: flex; align-items: center; gap: 8px; color: #667064; font-size: 13px; font-weight: 600; }
+.ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+}
+.stat b { display: block; margin: 14px 0 6px; font-size: 30px; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
+.trend { font-size: 12px; font-weight: 700; }
+.trend.up { color: var(--up); }
+.trend.down { color: var(--down); }
+.trend em { font-style: normal; color: var(--muted); font-weight: 500; margin-left: 6px; }
+h2 { margin: 0; font-size: 16px; letter-spacing: -0.02em; }
+.linkish { border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; }
+.chart { display: flex; gap: 8px; height: 176px; margin-top: 14px; }
+.yaxis { display: flex; flex-direction: column; justify-content: space-between; color: #b0b6ae; font-size: 11px; padding-bottom: 22px; }
+.plot { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.bars { flex: 1; display: flex; align-items: flex-end; gap: 12px; border-bottom: 1px dashed #e6ebe4; }
+.col { flex: 1; display: flex; align-items: flex-end; height: 100%; }
+.bar {
+  width: 100%;
+  border-radius: 12px 12px 8px 8px;
+  background: var(--bar);
+  min-height: 8px;
+}
+.bar.hot {
+  background: repeating-linear-gradient(-45deg, var(--hot), var(--hot) 5px, #f4f7f2 5px, #f4f7f2 8px);
+}
+.days { display: flex; gap: 12px; margin-top: 8px; }
+.days span { flex: 1; text-align: center; color: #a3aaa2; font-size: 12px; }
+.donut-row { display: flex; align-items: center; gap: 18px; min-height: 176px; }
+.donut { position: relative; width: 148px; height: 148px; flex: none; }
+.donut svg { width: 148px; height: 148px; transform: rotate(-90deg); }
+.donut strong {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+.legend { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #667064; }
+.legend div { display: flex; align-items: center; gap: 8px; }
+.swatch { width: 8px; height: 8px; border-radius: 50%; }
+.list { display: flex; flex-direction: column; }
+.item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+.item:first-child { border-top: 0; }
+.item b { display: block; font-size: 14px; }
+.item .sub { font-size: 12px; }
+.amt { color: var(--up); font-weight: 700; font-variant-numeric: tabular-nums; }
+.pill {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+.who { display: flex; align-items: center; gap: 8px; color: #4e564e; font-size: 13px; font-weight: 600; }
+.who .avatar { width: 28px; height: 28px; font-size: 12px; }
+.empty { color: var(--muted); padding: 18px 0; font-size: 14px; }
+.work { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+label { display: block; margin: 10px 0 6px; color: var(--muted); font-size: 12px; font-weight: 600; }
+input, select, textarea {
+  width: 100%;
+  border: 0;
+  background: #f3f6f2;
+  border-radius: 12px;
+  padding: 12px 12px;
+}
+textarea { min-height: 84px; resize: vertical; }
+.finder input { width: auto; flex: 1; border: 0; outline: 0; background: transparent; padding: 0; min-width: 0; }
+pre { white-space: pre-wrap; background: #f3f6f2; border-radius: 12px; padding: 12px; font-size: 12px; margin: 8px 0 0; }
+[hidden] { display: none !important; }
+.actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.primary, .quiet {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 700;
+}
+.primary { background: #1c1f1c; color: #fff; }
+.quiet { background: var(--soft); color: var(--ink); }
+.error { color: var(--down); min-height: 1.2em; font-size: 13px; font-weight: 600; }
+.signin { max-width: 520px; margin-top: 28px; }
+@media (max-width: 980px) {
+  .frame { grid-template-columns: 1fr; padding: 12px; }
+  .rail { position: static; height: auto; flex-direction: row; border-radius: 22px; padding: 10px 12px; overflow: auto; }
+  .rail nav { flex-direction: row; margin: 0 0 0 8px; }
+  .grow { display: none; }
+  .head, .stats, .split, .work { display: grid; grid-template-columns: 1fr; }
+  .finder { min-width: 0; }
+  .donut-row { flex-wrap: wrap; }
+}
+</style>
 </head>
 <body>
-  <div class="shell">
-    <aside class="rail"><div class="mark" title="Cove"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16c2-6 14-6 16 0"/><path d="M8 16v3h8v-3"/></svg></div></aside>
-    <main class="content">
-      <div><h1>Hello</h1><p class="sub">Run one command with a time limit and a memory cap. This page is only on this machine.</p></div>
-      <div class="stats">
-        <article class="stat"><div class="k">Exit</div><b id="exit">–</b></article>
-        <article class="stat"><div class="k">Timed out</div><b id="timed">–</b></article>
-        <article class="stat"><div class="k">Truncated</div><b id="cut">–</b></article>
+  <div class="frame">
+    <aside class="rail">
+      <div class="mark" title="Cove"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM8 10l3 2-3 2M13 14h4"/></svg></div>
+      <nav>
+        <button class="on" data-view="home" title="Desk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5M7 10v9h10v-9"/></svg></button>
+        <button data-view="run" title="Run"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM8 10l3 2-3 2M13 14h4"/></svg></button>
+      </nav>
+      <div class="grow"></div>
+      <div class="avatar">C</div>
+    </aside>
+    <main class="stage">
+      <header class="head">
+        <div class="greet">
+          <div class="badge-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM8 10l3 2-3 2M13 14h4"/></svg></div>
+          <div>
+            <h1 id="hello">Hello</h1>
+            <p class="sub" id="sub">One command, with the time, output, and memory caps.</p>
+          </div>
+        </div>
+        <div class="tools">
+          <div class="finder">
+            <input id="filter" placeholder="Search Anything...">
+            <button class="go" id="filter-go" title="Search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16zM21 21l-4.3-4.3"/></svg></button>
+          </div>
+          <button class="round" data-open="run" title="Run a command"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 7H3s3 0 3-7M10 20a2 2 0 0 0 4 0"/></svg></button>
+        </div>
+      </header>
+      <div id="view-home">
+        <section class="stats">
+          <article class="card"><div class="stat-label"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>Exit</div><b id="exit">–</b><div class="trend up" id="exit-note">latest run</div></article>
+          <article class="card"><div class="stat-label"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 7v6l4 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/></svg></span>Timed out</div><b id="timed">–</b><div class="trend up">limit <em>wall clock</em></div></article>
+          <article class="card"><div class="stat-label"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h10M4 17h7"/></svg></span>Truncated</div><b id="cut">–</b><div class="trend up">output <em>byte cap</em></div></article>
+        </section>
+        <section class="split">
+          <article class="card">
+            <div class="card-top"><h2>Output size</h2><span class="sub">Last seven runs</span></div>
+            <div class="chart"><div class="yaxis"><span id="ymax">0</span><span id="ymid">0</span><span>0</span></div><div class="plot"><div class="bars" id="bars"></div><div class="days" id="days"></div></div></div>
+          </article>
+          <article class="card">
+            <div class="card-top"><h2>Results</h2><button class="linkish" data-open="run">See all</button></div>
+            <div class="donut-row">
+              <div class="donut">
+                <svg viewBox="0 0 148 148"><circle cx="74" cy="74" r="54" fill="none" stroke="#eef2ea" stroke-width="16"></circle><circle id="arc-a" cx="74" cy="74" r="54" fill="none" stroke="var(--accent)" stroke-width="16"></circle><circle id="arc-b" cx="74" cy="74" r="54" fill="none" stroke="var(--lilac)" stroke-width="16"></circle></svg>
+                <strong id="donut-center">0</strong>
+              </div>
+              <div class="legend">
+                <div><i class="swatch" style="background:var(--accent)"></i><span id="legend-a">Clean · 0</span></div>
+                <div><i class="swatch" style="background:var(--lilac)"></i><span id="legend-b">Stopped · 0</span></div>
+              </div>
+            </div>
+          </article>
+        </section>
+        <section class="split">
+          <article class="card">
+            <div class="card-top"><h2>Runs</h2><button class="linkish" data-open="run">See all</button></div>
+            <div class="list" id="runs"><p class="empty">No command yet.</p></div>
+          </article>
+          <article class="card">
+            <div class="card-top"><h2>Output</h2></div>
+            <pre id="stdout"></pre>
+            <p class="error" id="err"></p>
+          </article>
+        </section>
       </div>
-      <section class="panel" style="margin-top:16px">
-        <h2>Command</h2>
-        <div class="row">
-          <div><label>Program</label><input id="path" value="cmd"></div>
-          <div><label>Arguments</label><input id="args" value="/c echo cove"></div>
-        </div>
-        <div class="row">
-          <div><label>Timeout seconds</label><input id="timeout" value="5"></div>
-          <div><label>Memory MB, 0 for none</label><input id="memory" value="0"></div>
-          <div><label>Output cap</label><input id="cap" value="1000000"></div>
-        </div>
-        <p><button class="primary" id="run">Run</button></p>
-        <p class="error" id="err"></p>
-      </section>
-      <div class="grid">
-        <section class="panel"><h2>Output</h2><pre id="stdout"></pre></section>
-        <section class="panel"><h2>Error output</h2><pre id="stderr"></pre></section>
+      <div class="work" id="view-run" hidden>
+        <article class="card">
+          <h2>Command</h2>
+          <label>Program</label><input id="path" value="cmd">
+          <label>Arguments</label><input id="args" value="/c echo cove">
+          <label>Timeout seconds</label><input id="timeout" value="5">
+          <label>Memory MB, 0 for none</label><input id="memory" value="0">
+          <label>Output cap</label><input id="cap" value="1000000">
+          <div class="actions"><button class="primary" id="run">Run</button></div>
+        </article>
+        <article class="card">
+          <h2>Error output</h2>
+          <pre id="stderr"></pre>
+        </article>
       </div>
     </main>
   </div>
   <script>
     const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+    const history = [];
+    function show(name) {
+      document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("on", button.dataset.view === name));
+      ["home", "run"].forEach((view) => { $("view-" + view).hidden = view !== name; });
+    }
+    function bars(values, labels) {
+      const v = values.slice(-7);
+      const l = labels.slice(-7);
+      while (v.length < 7) { v.unshift(0); l.unshift("·"); }
+      const peak = Math.max(1, ...v);
+      let hot = 0;
+      v.forEach((n, i) => { if (n >= v[hot]) hot = i; });
+      $("ymax").textContent = peak;
+      $("ymid").textContent = Math.round(peak / 2);
+      $("bars").innerHTML = v.map((n, i) => '<div class="col"><div class="bar' + (n > 0 && i === hot ? " hot" : "") + '" style="height:' + (n ? Math.max(22, (n / peak) * 100) : 16) + '%"></div></div>').join("");
+      $("days").innerHTML = l.map((name) => "<span>" + esc(String(name).slice(0, 3)) + "</span>").join("");
+    }
+    function donut(ok, bad) {
+      const total = (ok + bad) || 1;
+      const c = 2 * Math.PI * 54;
+      const len = (ok / total) * c;
+      $("arc-a").setAttribute("stroke-dasharray", len + " " + (c - len));
+      $("arc-b").setAttribute("stroke-dasharray", (c - len) + " " + len);
+      $("arc-b").setAttribute("stroke-dashoffset", String(-len));
+      $("donut-center").textContent = String(ok + bad);
+      $("legend-a").textContent = "Clean · " + ok;
+      $("legend-b").textContent = "Stopped · " + bad;
+    }
+    function paint() {
+      const q = $("filter").value.toLowerCase();
+      const rows = history.filter((row) => !q || row.title.toLowerCase().includes(q));
+      $("runs").innerHTML = rows.length ? rows.slice(0, 5).map((row) => '<div class="item"><div class="avatar">' + esc(row.title.slice(0, 1).toUpperCase()) + '</div><div><b>' + esc(row.title) + '</b><div class="sub">' + esc(row.detail) + '</div></div><div class="amt">' + esc(row.mark) + "</div></div>").join("") : '<p class="empty">No command yet.</p>';
+      const ok = history.filter((row) => row.ok).length;
+      donut(ok, history.length - ok);
+      bars(history.map((row) => row.bytes).reverse(), history.map((row) => row.title).reverse());
+    }
     $("run").onclick = async () => {
       $("err").textContent = "";
       const memory = Number($("memory").value || 0) * 1024 * 1024;
@@ -66,9 +377,22 @@
       $("exit").textContent = row.exit;
       $("timed").textContent = row.timed_out ? "yes" : "no";
       $("cut").textContent = row.truncated ? "yes" : "no";
+      $("exit-note").textContent = row.exit === 0 ? "clean exit" : "stopped";
+      $("exit-note").className = row.exit === 0 ? "trend up" : "trend down";
       $("stdout").textContent = row.stdout;
       $("stderr").textContent = row.stderr;
+      const title = ($("path").value + " " + $("args").value).trim();
+      history.unshift({ title, detail: row.timed_out ? "timed out" : "finished", mark: String(row.exit), ok: row.exit === 0 && !row.timed_out, bytes: (row.stdout || "").length });
+      if (history.length > 7) history.pop();
+      paint();
+      show("home");
     };
+    $("filter").oninput = paint;
+    $("filter-go").onclick = paint;
+    document.querySelectorAll("[data-view]").forEach((button) => button.onclick = () => show(button.dataset.view));
+    document.querySelectorAll("[data-open]").forEach((button) => button.onclick = () => show(button.dataset.open));
+    bars([0, 0, 0, 0, 0, 0, 0], ["·", "·", "·", "·", "·", "·", "·"]);
+    donut(0, 0);
   </script>
 </body>
 </html>
