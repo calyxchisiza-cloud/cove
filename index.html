@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cove</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --wash:#e3f3ef; --shell:#f4faf8; --ink:#16302c; --muted:#6f8580; --line:#e3eeea; --accent:#0f766e; --soft:#d7f3ee; --down:#d4534b; }
+    * { box-sizing:border-box; } body { margin:0; min-height:100vh; font-family:Inter,"Segoe UI",sans-serif; color:var(--ink); background:radial-gradient(900px 480px at 10% -10%, #fff, var(--wash)); }
+    .shell { width:min(1120px, calc(100% - 40px)); margin:28px auto; min-height:760px; display:grid; grid-template-columns:84px 1fr; background:var(--shell); border-radius:28px; box-shadow:0 24px 60px rgba(15,60,50,.08); }
+    .rail { display:flex; flex-direction:column; align-items:center; padding:22px 0; }
+    .mark { width:44px; height:44px; border-radius:14px; background:var(--soft); color:var(--accent); display:grid; place-items:center; }
+    .content { padding:28px 28px 28px 6px; }
+    h1 { margin:0; font-size:28px; letter-spacing:-.03em; } .sub { margin:4px 0 0; color:var(--muted); font-size:14px; }
+    .stats, .grid { display:grid; gap:14px; margin-top:16px; } .stats { grid-template-columns:repeat(3,1fr); } .grid { grid-template-columns:1fr 1fr; }
+    .stat, .panel { background:#fff; border-radius:18px; padding:16px 18px; }
+    .stat .k { color:var(--muted); font-size:13px; } .stat b { display:block; margin-top:10px; font-size:30px; }
+    h2 { margin:0 0 8px; font-size:16px; } label { display:block; margin:10px 0 4px; font-size:12px; color:var(--muted); }
+    input, button { font:inherit; } input { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+    .row { display:flex; gap:10px; } .row > * { flex:1; }
+    button.primary { background:var(--accent); color:#fff; border:0; border-radius:12px; padding:10px 14px; cursor:pointer; }
+    pre { white-space:pre-wrap; background:#f3faf8; border-radius:12px; padding:12px; min-height:80px; } .error { color:var(--down); }
+    @media (max-width:900px) { .shell { grid-template-columns:1fr; } .stats, .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail"><div class="mark" title="Cove"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16c2-6 14-6 16 0"/><path d="M8 16v3h8v-3"/></svg></div></aside>
+    <main class="content">
+      <div><h1>Hello</h1><p class="sub">Run one command with a time limit and a memory cap. This page is only on this machine.</p></div>
+      <div class="stats">
+        <article class="stat"><div class="k">Exit</div><b id="exit">–</b></article>
+        <article class="stat"><div class="k">Timed out</div><b id="timed">–</b></article>
+        <article class="stat"><div class="k">Truncated</div><b id="cut">–</b></article>
+      </div>
+      <section class="panel" style="margin-top:16px">
+        <h2>Command</h2>
+        <div class="row">
+          <div><label>Program</label><input id="path" value="cmd"></div>
+          <div><label>Arguments</label><input id="args" value="/c echo cove"></div>
+        </div>
+        <div class="row">
+          <div><label>Timeout seconds</label><input id="timeout" value="5"></div>
+          <div><label>Memory MB, 0 for none</label><input id="memory" value="0"></div>
+          <div><label>Output cap</label><input id="cap" value="1000000"></div>
+        </div>
+        <p><button class="primary" id="run">Run</button></p>
+        <p class="error" id="err"></p>
+      </section>
+      <div class="grid">
+        <section class="panel"><h2>Output</h2><pre id="stdout"></pre></section>
+        <section class="panel"><h2>Error output</h2><pre id="stderr"></pre></section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    $("run").onclick = async () => {
+      $("err").textContent = "";
+      const memory = Number($("memory").value || 0) * 1024 * 1024;
+      const response = await fetch("/v1/run", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ path:$("path").value, args:$("args").value.split(" ").filter(Boolean), timeout_seconds:Number($("timeout").value), max_output:Number($("cap").value), memory }) });
+      const text = await response.text();
+      if (!response.ok) { $("err").textContent = text; return; }
+      const row = JSON.parse(text);
+      $("exit").textContent = row.exit;
+      $("timed").textContent = row.timed_out ? "yes" : "no";
+      $("cut").textContent = row.truncated ? "yes" : "no";
+      $("stdout").textContent = row.stdout;
+      $("stderr").textContent = row.stderr;
+    };
+  </script>
+</body>
+</html>

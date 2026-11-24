@@ -30,11 +30,11 @@ type Request struct {
 
 // Result is what the process produced. TimedOut means the time limit stopped it.
 type Result struct {
-	Exit      int
-	Stdout    string
-	Stderr    string
-	TimedOut  bool
-	Truncated bool
+	Exit      int    `json:"exit"`
+	Stdout    string `json:"stdout"`
+	Stderr    string `json:"stderr"`
+	TimedOut  bool   `json:"timed_out"`
+	Truncated bool   `json:"truncated"`
 }
 
 // Run starts Path and waits for it to finish, or for the time limit.

@@ -3,8 +3,11 @@ package cove
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -113,5 +116,13 @@ func TestOutputCap(t *testing.T) {
 func TestRejectsEmptyCommand(t *testing.T) {
 	if _, err := Run(context.Background(), Request{}); err != ErrInvalid {
 		t.Fatalf("%v", err)
+	}
+}
+
+func TestPage(t *testing.T) {
+	rec := httptest.NewRecorder()
+	Handler().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "Hello") {
+		t.Fatalf("%d", rec.Code)
 	}
 }
